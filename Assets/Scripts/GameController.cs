@@ -1,4 +1,9 @@
-﻿using System.Collections;
+﻿/*
+ * Script for the game. Oversees the operation of a game through a GameManager gameobject. 
+ * 
+ */
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;

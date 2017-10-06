@@ -1,4 +1,9 @@
-﻿using System.Collections;
+﻿/*
+ * Script for Paddles prefab. Affects Paddle behavior.
+ * 
+ */
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 

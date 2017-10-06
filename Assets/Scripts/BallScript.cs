@@ -1,4 +1,8 @@
-﻿using System.Collections;
+﻿/*
+ * Script for Ball Prefabs in game. Affects Ball Behavior
+ */
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
