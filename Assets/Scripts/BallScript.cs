@@ -8,21 +8,13 @@ using UnityEngine;
 
 public class BallScript : MonoBehaviour {
 
-    private float speed = 5f;
+    private float speed = 15f;
     [SerializeField]
     private Rigidbody ball;
     private bool isActive; //isActive is used to see if the ball can reflect off something.
     private GameController _gc;
 
 	// Use this for initialization
-	void Start () {
-       
-
-    }
-
-    private void Update()
-    {
-    }
 
     public void init(GameController gc)
     {
@@ -53,26 +45,26 @@ public class BallScript : MonoBehaviour {
                 ball.velocity = new Vector3(ball.velocity.x, -ball.velocity.y); //if it hits the ceiling or floor, reverse y. 
                 StartCoroutine(OnHit());
             }
-            if (collision.collider.CompareTag("Score"))
-            {
-                /*
-                ball.velocity = new Vector3(-ball.velocity.x, ball.velocity.y); //if it hits vertical walls, reverse x (for now)
-                StartCoroutine(OnHit());
-                */
-                if (ball.position.x < collision.transform.position.x) //check if ball is to left of wall
-                {
-                    _gc.increaseScore(this.gameObject, false);
-                }
-                if (ball.position.x > collision.transform.position.x)
-                {
-                    _gc.increaseScore(this.gameObject, true);
-                }
+            
+        }
 
+        if (collision.collider.CompareTag("Score"))
+        {
+            /*
+            ball.velocity = new Vector3(-ball.velocity.x, ball.velocity.y); //if it hits vertical walls, reverse x (for now)
+            StartCoroutine(OnHit());
+            */
+            if (ball.position.x < collision.transform.position.x) //check if ball is to left of wall
+            {
+                _gc.increaseScore(this.gameObject, false);
             }
-            SpeedRegulation();
+            if (ball.position.x > collision.transform.position.x)
+            {
+                _gc.increaseScore(this.gameObject, true);
+            }
 
         }
-        
+
 
     }
     IEnumerator OnHit()
@@ -82,27 +74,7 @@ public class BallScript : MonoBehaviour {
         isActive = true; 
 
     }   
-
-    private void SpeedRegulation()
-    {
-
-        float reduce = 0.2f;
-        float reduceValue;
-
-        //this function reduces velocity with every wall collision if the ball's velocity is moving at more than speed. 
-        if(ball.velocity.x > speed)
-        { 
-            reduceValue = (ball.velocity.x - speed) * reduce;
-            ball.velocity = new Vector3(reduceValue, ball.velocity.y);
-        }
-
-        if (ball.velocity.y > speed)
-        {
-            reduceValue = (ball.velocity.y - speed) * reduce;
-            ball.velocity = new Vector3(ball.velocity.x, reduceValue);
-        }
-
-    }
+    
 
     private float getRelativePosFromCenter(Vector3 ballPosition, Vector3 paddlePosition, float racketLength)
     {

@@ -26,8 +26,9 @@ public class GameController : MonoBehaviour {
     private GameObject walls;
     private Collider wallA;
     private Collider wallB;
-    
 
+    private List<ActorController> _players;
+    
 
 
     public GameObject paddle; //declared in-editor.
@@ -48,6 +49,7 @@ public class GameController : MonoBehaviour {
         walls = transform.Find("Walls").gameObject;
         wallA = walls.transform.Find("PlayerAWall").GetComponent<Collider>();
         wallB = walls.transform.Find("PlayerBWall").GetComponent<Collider>();
+        
 
         //Initialize Player Scores
         PlayerAScore = 0;
@@ -57,6 +59,9 @@ public class GameController : MonoBehaviour {
         updateScore();
         Winner_text.text = "Ready...";
 
+        //Initialize Players
+        _players = new List<ActorController>();
+
         StartCoroutine(MatchReady());
 
     }
@@ -64,8 +69,8 @@ public class GameController : MonoBehaviour {
     IEnumerator MatchReady()
     {
         //Instantiate Paddles at Node positions.
-        spawnPlayer(false, nodeA);
-        spawnPlayer(true, nodeB);
+        _players.Add(spawnPlayer(false, nodeA));
+        _players.Add(spawnPlayer(true, nodeB));
 
         yield return new WaitForSeconds(3f);
 
@@ -78,11 +83,13 @@ public class GameController : MonoBehaviour {
     
     //======================Spawn Handling=====================//
 
-    private void spawnPlayer(bool isAI, GameObject side)
+    private ActorController spawnPlayer(bool isAI, GameObject side)
     {
         GameObject p = Instantiate(paddle, side.transform.position, Quaternion.identity);
         ActorController pScript = p.GetComponent<ActorController>();
         pScript.setAI(isAI);
+
+        return pScript;
     }
 
     private void spawnBall(GameObject node)
@@ -90,6 +97,7 @@ public class GameController : MonoBehaviour {
         GameObject p = Instantiate(ball, node.transform.position, Quaternion.identity);
         BallScript bScript = p.GetComponent<BallScript>();
         bScript.init(this);
+        
         
     }
 
@@ -104,6 +112,10 @@ public class GameController : MonoBehaviour {
         }else
         {
             PlayerAScore++;
+        }
+        foreach(ActorController player in _players)
+        {
+            player.removeTarget(obj);
         }
         Destroy(obj);
         updateScore();
