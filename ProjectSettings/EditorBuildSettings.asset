@@ -4,4 +4,10 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/StartScreen.unity
+    guid: 28e325a85c617904594853fa9e57a932
+  - enabled: 1
+    path: Assets/PongStage.unity
+    guid: e119626318c90f04c9d0022fee3287eb

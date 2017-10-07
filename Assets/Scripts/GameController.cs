@@ -6,6 +6,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class GameController : MonoBehaviour {
@@ -28,14 +29,15 @@ public class GameController : MonoBehaviour {
     private Collider wallB;
 
     private List<ActorController> _players;
-    
+    private GameManagement _gm;
 
+    private int _gameDifficulty;
 
     public GameObject paddle; //declared in-editor.
     public GameObject ball; 
 
 	// Use this for initialization
-	void Start () {
+	void Awake () {
 
         nodeA = transform.Find("NodeA").gameObject;
         nodeB = transform.Find("NodeB").gameObject;
@@ -49,7 +51,8 @@ public class GameController : MonoBehaviour {
         walls = transform.Find("Walls").gameObject;
         wallA = walls.transform.Find("PlayerAWall").GetComponent<Collider>();
         wallB = walls.transform.Find("PlayerBWall").GetComponent<Collider>();
-        
+
+        _gm = FindObjectOfType<GameManagement>();
 
         //Initialize Player Scores
         PlayerAScore = 0;
@@ -62,32 +65,33 @@ public class GameController : MonoBehaviour {
         //Initialize Players
         _players = new List<ActorController>();
 
-        StartCoroutine(MatchReady());
+        //Initialize Difficulty
+        _gameDifficulty = _gm.getDifficulty(); 
+        
+        
 
     }
 
-    IEnumerator MatchReady()
+     void Start()
     {
-        //Instantiate Paddles at Node positions.
-        _players.Add(spawnPlayer(false, nodeA));
-        _players.Add(spawnPlayer(true, nodeB));
-
-        yield return new WaitForSeconds(3f);
-
-        Winner_text.text = ""; //set Winner_text to empty once match has started.
-        //Instantiate Ball at Node Position
-        spawnBall(ballNode);
+        StartCoroutine(MatchReady());
     }
-	
+    
+    //===========Set Function===========//
 
+    public void setAIDifficulty(int diff)
+    {
+        _gameDifficulty = diff;
+    }
     
     //======================Spawn Handling=====================//
 
-    private ActorController spawnPlayer(bool isAI, GameObject side)
+    private ActorController spawnPlayer(bool isAI, GameObject side, int diff)
     {
         GameObject p = Instantiate(paddle, side.transform.position, Quaternion.identity);
         ActorController pScript = p.GetComponent<ActorController>();
         pScript.setAI(isAI);
+        pScript.setDifficulty(diff);
 
         return pScript;
     }
@@ -141,6 +145,21 @@ public class GameController : MonoBehaviour {
         PlayerBScore_text.text = PlayerBScore.ToString();
     }
 
+    //=======================Events======================//
+    
+    IEnumerator MatchReady()
+    {
+        //Instantiate Paddles at Node positions.
+        _players.Add(spawnPlayer(false, nodeA, _gameDifficulty));
+        _players.Add(spawnPlayer(true, nodeB, _gameDifficulty));
+
+        yield return new WaitForSeconds(3f);
+
+        Winner_text.text = ""; //set Winner_text to empty once match has started.
+        //Instantiate Ball at Node Position
+        spawnBall(ballNode);
+    }
+
     IEnumerator WaitForBallRespawn()
     {
         yield return new WaitForSeconds(3f);
@@ -153,6 +172,7 @@ public class GameController : MonoBehaviour {
         Winner_text.text = winner + " wins!";
         yield return new WaitForSeconds(3f);
         //go back to title screen... if there was one.
+        SceneManager.LoadScene("StartScreen");
     }
 
 

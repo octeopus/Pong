@@ -17,6 +17,7 @@ public class ActorController : MonoBehaviour {
     private List<GameObject> currentTargets;
     [SerializeField]
     private GameObject _target;
+    private int _difficulty; //0 = easy, 1 = medium, 2 = hard
 
 
 	// Use this for initialization
@@ -61,13 +62,41 @@ public class ActorController : MonoBehaviour {
         //if paddle's y > ball's y, input = -1 (move down)
         //add random chance to ignore movement as difficulty.
 
-        
+        //0 = easy, 1 = medium, 2 = hard. 
+        //chance of activating command should be: 40% for easy, 55% for medium, 80% for hard.
 
-        if(rb.position.y < _target.transform.position.y)
+        bool decision = false;
+        int chance = Random.Range(0, 101);
+
+        switch (_difficulty)
+        {
+            case 0:
+            default:
+                if(chance < 40)
+                {
+                    decision = true;
+                }
+                break;
+            case 1:
+                if(chance < 55)
+                {
+                    decision = true;
+                }
+                break;
+            case 2:
+                if(chance < 80)
+                {
+                    decision = true;
+                }
+
+                break;
+        }
+
+        if(rb.position.y < _target.transform.position.y && decision)
         {
             StartCoroutine(MoveUp()); //move up
         }
-        else if (rb.position.y > _target.transform.position.y)
+        else if (rb.position.y > _target.transform.position.y && decision)
         {
             StartCoroutine(MoveDown()); //move down
         }else
@@ -79,7 +108,7 @@ public class ActorController : MonoBehaviour {
 
     //=====================Movement Functions==================//
 
-        IEnumerator MoveUp()
+     IEnumerator MoveUp()
     {
         rb.velocity = new Vector3(0, 1) * speed;
         yield return new WaitForFixedUpdate();
@@ -142,6 +171,12 @@ public class ActorController : MonoBehaviour {
         {
             currentTargets.Remove(obj);
         }
+
+    }
+
+    public void setDifficulty(int difficulty)
+    {
+        if(difficulty < 3 && difficulty >= 0) _difficulty = difficulty;
 
     }
 
